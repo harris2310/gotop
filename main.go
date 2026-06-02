@@ -5,10 +5,11 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 )
 
-func readTemp(core int, buff []byte) (temp int) {
+func readTemp(core int, buff []byte, wg *sync.WaitGroup, ch chan int) (temp int) {
 	file, err := os.OpenFile("/sys/class/thermal/thermal_zone0/hwmon"+strconv.Itoa(core)+"/temp1_input", os.O_RDONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
@@ -18,7 +19,8 @@ func readTemp(core int, buff []byte) (temp int) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return n
+	ch <- n
+	return
 }
 
 func main() {
@@ -29,13 +31,18 @@ func main() {
 		sum += 1
 	}
 	for {
-
+		var wg sync.WaitGroup
 		buff := make([]byte, 128)
+		len := make(chan int)
+		wg.Add(1)
+		wg.Go(func() {
+			defer wg.Done()
+			readTemp(1, buff, &wg, len)
+		})
 
-		var len int = readTemp(1, buff)
-		fmt.Println(string(buff[:len-4]) + "C")
+		wg.Wait()
+		fmt.Println(string(buff[:<-len-4]) + "C")
 		time.Sleep(1 * time.Second)
-
 	}
 	os.Exit(1)
 }
