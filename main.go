@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func readTemp(core int, buff []byte, wg *sync.WaitGroup, ch chan int) (temp int) {
+func readTemp(core int, buff []byte, ch chan int) (temp int) {
 	file, err := os.OpenFile("/sys/class/thermal/thermal_zone0/hwmon"+strconv.Itoa(core)+"/temp1_input", os.O_RDONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
@@ -26,22 +26,22 @@ func readTemp(core int, buff []byte, wg *sync.WaitGroup, ch chan int) (temp int)
 func main() {
 	fmt.Println("hello sir")
 	sum := 1
-	for sum < 10 {
+	for sum < 2 {
 		fmt.Println("------")
 		sum += 1
 	}
 	for {
 		var wg sync.WaitGroup
 		buff := make([]byte, 128)
-		len := make(chan int)
+		ch := make(chan int)
 		wg.Add(1)
 		wg.Go(func() {
-			defer wg.Done()
-			readTemp(1, buff, &wg, len)
+			readTemp(1, buff, ch)
+			wg.Done()
 		})
-
+		len := <-ch
 		wg.Wait()
-		fmt.Println(string(buff[:<-len-4]) + "C")
+		fmt.Println(string(buff[:len-4]) + "C")
 		time.Sleep(1 * time.Second)
 	}
 	os.Exit(1)
