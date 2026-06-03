@@ -27,20 +27,21 @@ func readTemp(core int, buff []byte, ch chan int) (temp int) {
 }
 
 func main() {
+	// oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// defer term.Restore(int(os.Stdin.Fd()), oldState)
 	width, height, err := term.GetSize(0)
 	if err != nil {
 		log.Fatal("Couldn't get size of terminal")
 	}
+	fmt.Print("\033[H\033[2J")
 	internal.InitializeGrid(width, height)
 	for {
 		var wg sync.WaitGroup
 		buff := make([]byte, 128)
 		ch := make(chan int)
-		// oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// defer term.Restore(int(os.Stdin.Fd()), oldState)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -51,8 +52,7 @@ func main() {
 		})
 		len := <-ch
 		wg.Wait()
-		internal.RenderGrid(width, height, len)
-		fmt.Print("\r" + string(buff[:len-4]) + "C")
+		internal.RenderGrid(width, height, len, buff)
 		time.Sleep(1 * time.Second)
 	}
 	os.Exit(1)

@@ -9,7 +9,7 @@ func InitializeGrid(width int, height int) {
 	secondToLast := height - 1
 	for sum < height {
 		switch sum {
-		case 1:
+		case 4:
 			fmt.Println("-----------")
 		case secondToLast:
 			fmt.Println("-----------")
@@ -20,18 +20,19 @@ func InitializeGrid(width int, height int) {
 	}
 }
 
-func RenderGrid(width int, height int, temp int) {
+func RenderGrid(width int, height int, len int, buff []byte) {
 	sum := 4
 	secondToLast := height - 1
 	midway := int(height / 2)
+	fmt.Printf("\033[1;1H")
 	for sum < height {
 		switch sum {
-		case 1:
-			fmt.Println("\r-----------")
+		case 10:
+			fmt.Println("\r" + string(buff[:len-4]) + "C")
 		case secondToLast:
 			fmt.Println("\r-----------")
 		case midway:
-			fmt.Println("\r" + string(temp))
+			fmt.Println("\r-----------")
 		default:
 			fmt.Println("\r||//")
 		}
