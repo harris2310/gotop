@@ -27,14 +27,12 @@ func RenderGrid(width int, height int, len int, buff []byte) {
 	fmt.Printf("\033[1;1H")
 	for sum < height {
 		switch sum {
-		case 10:
-			fmt.Println("\r" + string(buff[:len-4]) + "C")
 		case secondToLast:
-			fmt.Println("\r-----------")
+			fmt.Println("-----------")
 		case midway:
-			fmt.Println("\r-----------")
+			fmt.Println("\r" + string(buff[:len-4]) + "C")
 		default:
-			fmt.Println("\r||//")
+			fmt.Println("||//")
 		}
 		sum += 1
 	}
