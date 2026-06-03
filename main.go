@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"gotop/internal"
 	"log"
 	"os"
 	"strconv"
@@ -26,19 +27,11 @@ func readTemp(core int, buff []byte, ch chan int) (temp int) {
 }
 
 func main() {
-	_, height, err := term.GetSize(0)
-
-	sum := 4
-	for sum < height {
-		if sum == 1 {
-			fmt.Println("-----------")
-		} else if sum == height-1 {
-			fmt.Println("-----------")
-		} else {
-			fmt.Println("\\||//")
-		}
-		sum += 1
+	width, height, err := term.GetSize(0)
+	if err != nil {
+		log.Fatal("Couldn't get size of terminal")
 	}
+	internal.InitializeGrid(width, height)
 	for {
 		var wg sync.WaitGroup
 		buff := make([]byte, 128)
@@ -58,6 +51,7 @@ func main() {
 		})
 		len := <-ch
 		wg.Wait()
+		internal.RenderGrid(width, height, len)
 		fmt.Print("\r" + string(buff[:len-4]) + "C")
 		time.Sleep(1 * time.Second)
 	}
