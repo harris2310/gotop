@@ -7,6 +7,8 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"golang.org/x/term"
 )
 
 func readTemp(core int, buff []byte, ch chan int) (temp int) {
@@ -24,16 +26,31 @@ func readTemp(core int, buff []byte, ch chan int) (temp int) {
 }
 
 func main() {
-	fmt.Println("hello sir")
-	sum := 1
-	for sum < 2 {
-		fmt.Println("------")
+	_, height, err := term.GetSize(0)
+
+	sum := 4
+	for sum < height {
+		if sum == 1 {
+			fmt.Println("-----------")
+		} else if sum == height-1 {
+			fmt.Println("-----------")
+		} else {
+			fmt.Println("\\||//")
+		}
 		sum += 1
 	}
 	for {
 		var wg sync.WaitGroup
 		buff := make([]byte, 128)
 		ch := make(chan int)
+		// oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// defer term.Restore(int(os.Stdin.Fd()), oldState)
+		if err != nil {
+			log.Fatal(err)
+		}
 		wg.Add(1)
 		wg.Go(func() {
 			readTemp(1, buff, ch)
@@ -41,7 +58,7 @@ func main() {
 		})
 		len := <-ch
 		wg.Wait()
-		fmt.Println(string(buff[:len-4]) + "C")
+		fmt.Print("\r" + string(buff[:len-4]) + "C")
 		time.Sleep(1 * time.Second)
 	}
 	os.Exit(1)
