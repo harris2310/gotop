@@ -39,12 +39,15 @@ func main() {
 	fmt.Print("\033[H\033[2J")
 	internal.InitializeGrid(width, height)
 	for {
+		fmt.Print("\033[H\033[2J")
+
 		var wg sync.WaitGroup
+		width, height, err := term.GetSize(0)
+		if err != nil {
+			log.Fatal("Couldn't compute terminal size")
+		}
 		buff := make([]byte, 128)
 		ch := make(chan int)
-		if err != nil {
-			log.Fatal(err)
-		}
 		wg.Add(1)
 		wg.Go(func() {
 			readTemp(1, buff, ch)
