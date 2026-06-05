@@ -37,9 +37,10 @@ func main() {
 		log.Fatal("Couldn't get size of terminal")
 	}
 	fmt.Print("\033[H\033[2J")
-	internal.InitializeGrid(width, height)
+	emptyBuffer := make([]byte, 8)
+	internal.RenderGrid(width, height, 0, emptyBuffer, true)
+	time.Sleep(1 * time.Second)
 	for {
-		fmt.Print("\033[H\033[2J")
 
 		var wg sync.WaitGroup
 		width, height, err := term.GetSize(0)
@@ -55,7 +56,7 @@ func main() {
 		})
 		len := <-ch
 		wg.Wait()
-		internal.RenderGrid(width, height, len, buff)
+		internal.RenderGrid(width, height, len, buff, false)
 		time.Sleep(1 * time.Second)
 	}
 	os.Exit(1)
