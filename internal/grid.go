@@ -10,6 +10,8 @@ const colString string = "\u23D0"
 
 const degreeSign string = "\u00B0"
 
+const vertAlLeft string = "\u2e20"
+
 const smirkFace string = "\U0001F60F"
 
 func printTemp(buff []byte, len int) {
@@ -19,9 +21,9 @@ func printTemp(buff []byte, len int) {
 	}
 	switch {
 	case temp > 60:
-		fmt.Println("\r" + strconv.Itoa(temp) + smirkFace)
+		fmt.Println("\r" + strconv.Itoa(temp) + " " + smirkFace)
 	default:
-		fmt.Println("\r" + strconv.Itoa(temp) + " " + degreeSign)
+		fmt.Println("\r" + strconv.Itoa(temp) + degreeSign)
 	}
 }
 

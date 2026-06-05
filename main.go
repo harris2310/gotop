@@ -26,6 +26,15 @@ func readTemp(core int, buff []byte, ch chan int) (temp int) {
 	return
 }
 
+func readMem(buff []byte, ch chan int) (mem int, total int) {
+	file, err := os.OpenFile("/proc/meminfo", os.O_RDONLY, 0644)
+	if err != nil {
+		log.Fatal((err))
+	}
+	defer file.Close()
+	return
+}
+
 func main() {
 	// oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	// if err != nil {
