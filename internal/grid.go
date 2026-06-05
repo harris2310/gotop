@@ -28,7 +28,7 @@ func printTemp(buff []byte, len int) {
 func printBoxTop(width int) {
 	fmt.Printf("%d", width)
 	boxSize := int(width/3 - 2)
-	boxString := strings.Repeat("-", boxSize)
+	boxString := strings.Repeat("─", boxSize)
 	boxTopLine := boxString + " " + boxString + " " + boxString
 	fmt.Println("\r" + boxTopLine)
 }
