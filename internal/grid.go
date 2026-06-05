@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -9,8 +10,19 @@ const colString string = "\u23D0"
 
 const degreeSign string = "\u00B0"
 
+const smirkFace string = "\U0001F60F"
+
 func printTemp(buff []byte, len int) {
-	fmt.Println("\r" + string(buff[:len-4]) + degreeSign)
+	temp, err := strconv.Atoi(string(buff[:len-4]))
+	if err != nil {
+		fmt.Printf("Couldn't convert to int")
+	}
+	switch {
+	case temp > 60:
+		fmt.Println("\r" + strconv.Itoa(temp) + smirkFace)
+	default:
+		fmt.Println("\r" + strconv.Itoa(temp) + " " + degreeSign)
+	}
 }
 
 func purpleize(target string) string {
