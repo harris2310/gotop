@@ -5,22 +5,32 @@ import (
 	"strings"
 )
 
+const colString string = "\u23D0"
+
+const degreeSign string = "\u00B0"
+
 func printTemp(buff []byte, len int) {
-	fmt.Println("\r" + string(buff[:len-4]) + "C")
+	fmt.Println("\r" + string(buff[:len-4]) + degreeSign)
+}
+
+func purpleize(target string) string {
+	return fmt.Sprintf("\033[95m%s\033[0m", target)
+}
+
+func HideCursor() {
+	fmt.Printf("\033[?25l")
 }
 
 func printBoxHorizontal(width int) {
-	fmt.Printf("%d", width)
 	boxSize := int(width/3 - 2)
 	boxString := strings.Repeat("─", boxSize)
 	boxTopLine := boxString + " " + boxString + " " + boxString
-	fmt.Println("\r" + boxTopLine)
+	fmt.Println(purpleize(boxTopLine))
 }
 
-func printBoxVertical(height, width int) {
-	fmt.Printf("%d", height)
+func printBoxVertical(width int) {
 	boxSize := int(width/3 - 2)
-	lineString := "|" + strings.Repeat(" ", boxSize) + "|" + " " + "|" + strings.Repeat(" ", boxSize) + "|"
+	lineString := purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString)
 	fmt.Println("\r" + lineString)
 }
 
@@ -42,7 +52,7 @@ func RenderGrid(width int, height int, len int, buff []byte, isInitial bool) {
 				printTemp(buff, len)
 			}
 		default:
-			printBoxVertical(height, width)
+			printBoxVertical(width)
 
 		}
 		sum += 1

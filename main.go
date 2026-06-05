@@ -29,9 +29,10 @@ func readTemp(core int, buff []byte, ch chan int) (temp int) {
 func main() {
 	// oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	// if err != nil {
-	// 	panic(err)
+	// panic(err)
 	// }
 	// defer term.Restore(int(os.Stdin.Fd()), oldState)
+	internal.HideCursor()
 	width, height, err := term.GetSize(0)
 	if err != nil {
 		log.Fatal("Couldn't get size of terminal")
@@ -41,7 +42,6 @@ func main() {
 	internal.RenderGrid(width, height, 0, emptyBuffer, true)
 	time.Sleep(1 * time.Second)
 	for {
-
 		var wg sync.WaitGroup
 		width, height, err := term.GetSize(0)
 		if err != nil {
