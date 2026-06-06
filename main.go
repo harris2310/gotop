@@ -5,7 +5,9 @@ import (
 	"gotop/internal"
 	"log"
 	"os"
+	"regexp"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -26,13 +28,30 @@ func readTemp(core int, buff []byte, ch chan int) (temp int) {
 	return
 }
 
-func readMem(buff []byte, ch chan int) (mem int, total int) {
+func readMem() (mem int, total int) {
 	file, err := os.OpenFile("/proc/meminfo", os.O_RDONLY, 0644)
 	if err != nil {
 		log.Fatal((err))
 	}
+	buff := make([]byte, 4096)
 	defer file.Close()
-	return
+	_, errR := file.Read(buff)
+	if errR != nil {
+		log.Fatal(err)
+	}
+	memTot := strings.Index(string(buff), "MemTotal:")
+	memAvail := strings.Index(string(buff), "MemAvailable")
+	re := regexp.MustCompile(`\d+`)
+	numTot, errTot := strconv.Atoi(re.FindString(string(buff[memTot:])))
+	if errTot != nil {
+		log.Fatal(errTot)
+	}
+	numAvail, errAv := strconv.Atoi(re.FindString(string(buff[memAvail:])))
+	if errAv != nil {
+
+		log.Fatal(errAv)
+	}
+	return numAvail, numTot
 }
 
 func main() {
@@ -41,6 +60,8 @@ func main() {
 	// panic(err)
 	// }
 	// defer term.Restore(int(os.Stdin.Fd()), oldState)
+	readMem()
+	return
 	internal.HideCursor()
 	width, height, err := term.GetSize(0)
 	if err != nil {
