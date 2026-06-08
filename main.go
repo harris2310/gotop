@@ -60,8 +60,7 @@ func main() {
 	// panic(err)
 	// }
 	// defer term.Restore(int(os.Stdin.Fd()), oldState)
-	readMem()
-	return
+
 	internal.HideCursor()
 	width, height, err := term.GetSize(0)
 	if err != nil {
@@ -81,6 +80,7 @@ func main() {
 		ch := make(chan int)
 		wg.Add(1)
 		wg.Go(func() {
+			memAvail, memTot := readMem()
 			readTemp(1, buff, ch)
 			wg.Done()
 		})
