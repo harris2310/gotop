@@ -27,9 +27,11 @@ func printTemp(buff []byte, len int) {
 	}
 }
 
-func printMems(mems []int) string {
-	return fmt.Sprintf("\033[95m%d%d\033[0m", mems[0], mems[1])
+func printMems(mems []int) {
+	fmt.Println("\r" + strconv.Itoa(mems[0]) + " " + strconv.Itoa(mems[1]))
+	return
 }
+
 func purpleize(target string) string {
 	return fmt.Sprintf("\033[95m%s\033[0m", target)
 }
