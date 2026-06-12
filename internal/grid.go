@@ -27,6 +27,9 @@ func printTemp(buff []byte, len int) {
 	}
 }
 
+func printMems(mems []int) string {
+	return fmt.Sprintf("\033[95m%d%d\033[0m", mems[0], mems[1])
+}
 func purpleize(target string) string {
 	return fmt.Sprintf("\033[95m%s\033[0m", target)
 }
@@ -48,7 +51,7 @@ func printBoxVertical(width int) {
 	fmt.Println("\r" + lineString)
 }
 
-func RenderGrid(width int, height int, len int, buff []byte, isInitial bool) {
+func RenderGrid(width int, height int, len int, buff []byte, mems []int, isInitial bool) {
 	sum := 1
 	last := height - 1
 	midway := int(height / 2)
@@ -57,7 +60,7 @@ func RenderGrid(width int, height int, len int, buff []byte, isInitial bool) {
 	fmt.Printf("\033[1;1H")
 	for sum < height {
 		switch sum {
-		case 1, last, oneBelowMidway, oneAboveMidway:
+		case 1, last, oneAboveMidway:
 			printBoxHorizontal(width)
 		case midway:
 			if isInitial {
@@ -65,6 +68,8 @@ func RenderGrid(width int, height int, len int, buff []byte, isInitial bool) {
 			} else {
 				printTemp(buff, len)
 			}
+		case oneBelowMidway:
+			printMems(mems)
 		default:
 			printBoxVertical(width)
 

@@ -28,7 +28,7 @@ func readTemp(core int, buff []byte, ch chan int) (temp int) {
 	return
 }
 
-func readMem() (mem int, total int) {
+func readMem(ch chan []int) (mem int, total int) {
 	file, err := os.OpenFile("/proc/meminfo", os.O_RDONLY, 0644)
 	if err != nil {
 		log.Fatal((err))
@@ -51,7 +51,11 @@ func readMem() (mem int, total int) {
 
 		log.Fatal(errAv)
 	}
-	return numAvail, numTot
+	newSlice := make([]int, 2)
+	newSlice[0] = numAvail
+	newSlice[1] = numTot
+	ch <- newSlice
+	return
 }
 
 func main() {
@@ -68,7 +72,8 @@ func main() {
 	}
 	fmt.Print("\033[H\033[2J")
 	emptyBuffer := make([]byte, 8)
-	internal.RenderGrid(width, height, 0, emptyBuffer, true)
+	emptyIntBuff := make([]int, 2)
+	internal.RenderGrid(width, height, 0, emptyBuffer, emptyIntBuff, true)
 	time.Sleep(1 * time.Second)
 	for {
 		var wg sync.WaitGroup
@@ -78,17 +83,22 @@ func main() {
 		}
 		buff := make([]byte, 128)
 		ch := make(chan int)
-		wg.Add(1)
+		mem := make(chan []int)
+		wg.Add(2)
 		wg.Go(func() {
-			memAvail, memTot := readMem()
-			_, _ = memAvail, memTot
 			readTemp(1, buff, ch)
 			wg.Done()
 		})
+		wg.Go(func() {
+			memAvail, memTot := readMem(mem)
+			fmt.Println(memAvail, memTot)
+			wg.Done()
+		})
 		len := <-ch
+		mems := <-mem
+		fmt.Println(mems[0])
 		wg.Wait()
-		internal.RenderGrid(width, height, len, buff, false)
+		internal.RenderGrid(width, height, len, buff, mems, false)
 		time.Sleep(1 * time.Second)
 	}
-	os.Exit(1)
 }
