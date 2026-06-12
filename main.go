@@ -60,7 +60,7 @@ func main() {
 	// panic(err)
 	// }
 	// defer term.Restore(int(os.Stdin.Fd()), oldState)
-//
+
 	internal.HideCursor()
 	width, height, err := term.GetSize(0)
 	if err != nil {
@@ -69,6 +69,7 @@ func main() {
 	fmt.Print("\033[H\033[2J")
 	emptyBuffer := make([]byte, 8)
 	internal.RenderGrid(width, height, 0, emptyBuffer, true)
+	//
 	time.Sleep(1 * time.Second)
 	for {
 		var wg sync.WaitGroup
@@ -80,7 +81,7 @@ func main() {
 		ch := make(chan int)
 		wg.Add(1)
 		wg.Go(func() {
-			memAvail, memTot := readMem()
+			_, _ := readMem()
 			readTemp(1, buff, ch)
 			wg.Done()
 		})
