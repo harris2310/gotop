@@ -60,7 +60,7 @@ func main() {
 	// panic(err)
 	// }
 	// defer term.Restore(int(os.Stdin.Fd()), oldState)
-
+//
 	internal.HideCursor()
 	width, height, err := term.GetSize(0)
 	if err != nil {
