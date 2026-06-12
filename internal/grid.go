@@ -28,7 +28,7 @@ func printTemp(buff []byte, len int) {
 }
 
 func printMems(mems []int) {
-	fmt.Println("\r" + strconv.Itoa(mems[0]) + " " + strconv.Itoa(mems[1]))
+	fmt.Println("\r" + strconv.FormatFloat(float64(mems[0]/1000000), 'g', 2, 64) + " " + strconv.FormatFloat(float64(mems[1]/1000000), 'g', 2, 64))
 	return
 }
 
