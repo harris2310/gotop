@@ -28,7 +28,7 @@ func printTemp(buff []byte, len int) {
 }
 
 func printMems(mems []int) {
-	fmt.Println("\r" + strconv.FormatFloat(float64(mems[0]), 'g', 2, 64) + " " + strconv.FormatFloat(float64(mems[1]), 'g', 2, 64))
+	fmt.Println("\r" + strconv.FormatFloat(float64(mems[0])/1000000, 'f', 2, 64) + "(avail)/" + strconv.FormatFloat(float64(mems[1])/1000000, 'f', 2, 64) + "(in-use)")
 	return
 }
 
