@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"golang.org/x/term"
 	"gotop/internal"
 	"log"
 	"os"
@@ -10,8 +11,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"golang.org/x/term"
 )
 
 func readTemp(core int, buff []byte, ch chan int) (temp int) {
@@ -58,6 +57,28 @@ func readMem(ch chan []int) (mem int, total int) {
 	return
 }
 
+type Buffer struct {
+	width, height int
+	cells         [][]rune
+}
+
+func NewBuffer(w, h int) *Buffer {
+	cells := make([][]rune, h)
+
+	for y := range cells {
+		cells[y] = make([]rune, w)
+		for x := range cells[y] {
+			cells[y][x] = ' '
+		}
+	}
+
+	return &Buffer{
+		width:  w,
+		height: h,
+		cells:  cells,
+	}
+}
+
 func main() {
 	// oldState, err := term.MakeRaw(int(os.Stdin.Fd()))
 	// if err != nil {
@@ -73,6 +94,8 @@ func main() {
 	fmt.Print("\033[H\033[2J")
 	emptyBuffer := make([]byte, 8)
 	emptyIntBuff := make([]int, 2)
+	termBuff := NewBuffer(width, height)
+	term.Write(termBuff)
 	internal.RenderGrid(width, height, 0, emptyBuffer, emptyIntBuff, true)
 	time.Sleep(1 * time.Second)
 	for {

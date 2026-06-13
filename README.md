@@ -2,6 +2,7 @@
 
 ## TO DO
 
+!! Use a buffer to render
 Nicer ui
 Resizeable
 Cross platform

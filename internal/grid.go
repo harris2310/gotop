@@ -6,6 +6,8 @@ import (
 	"strings"
 )
 
+const memoryPieRadius int8 = 3
+
 const colString string = "\u23D0"
 
 const degreeSign string = "\u00B0"
@@ -47,8 +49,13 @@ func printBoxHorizontal(width int) {
 	fmt.Println(purpleize(boxTopLine))
 }
 
-func printBoxVertical(width int) {
+func printCircle(widthBounds []int) {
+	return
+}
+
+func printBoxVertical(width int, firstBox string) {
 	boxSize := int(width/3 - 2)
+
 	lineString := purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString)
 	fmt.Println("\r" + lineString)
 }
@@ -73,7 +80,7 @@ func RenderGrid(width int, height int, len int, buff []byte, mems []int, isIniti
 		case oneBelowMidway:
 			printMems(mems)
 		default:
-			printBoxVertical(width)
+			printBoxVertical(width, "")
 
 		}
 		sum += 1
