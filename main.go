@@ -57,14 +57,17 @@ func readMem(ch chan []int) (mem int, total int) {
 	return
 }
 
-type Buffer struct {
+type buffer struct {
 	width, height int
 	cells         [][]rune
 }
 
-func NewBuffer(w, h int) *Buffer {
-	cells := make([][]rune, h)
+type TermBufferer interface {
+	resize() interface{}
+}
 
+func NewBuffer(w, h int) *buffer {
+	cells := make([][]rune, h)
 	for y := range cells {
 		cells[y] = make([]rune, w)
 		for x := range cells[y] {
@@ -72,7 +75,7 @@ func NewBuffer(w, h int) *Buffer {
 		}
 	}
 
-	return &Buffer{
+	return &buffer{
 		width:  w,
 		height: h,
 		cells:  cells,
@@ -92,11 +95,7 @@ func main() {
 		log.Fatal("Couldn't get size of terminal")
 	}
 	fmt.Print("\033[H\033[2J")
-	emptyBuffer := make([]byte, 8)
-	emptyIntBuff := make([]int, 2)
 	termBuff := NewBuffer(width, height)
-	term.Write(termBuff)
-	internal.RenderGrid(width, height, 0, emptyBuffer, emptyIntBuff, true)
 	time.Sleep(1 * time.Second)
 	for {
 		var wg sync.WaitGroup
@@ -117,11 +116,10 @@ func main() {
 			fmt.Println(memAvail, memTot)
 			wg.Done()
 		})
-		len := <-ch
+		//	len := <-ch
 		mems := <-mem
 		fmt.Println(mems[0])
 		wg.Wait()
-		internal.RenderGrid(width, height, len, buff, mems, false)
 		time.Sleep(1 * time.Second)
 	}
 }
