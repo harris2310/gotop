@@ -62,15 +62,18 @@ func RenderGrid(runeBuffer *buffer, width int, height int) {
 
 	// Horizontal lines
 	rows := []int{
-		1,
+		0,
 		height / 2,
 		height - 1,
 	}
 
 	// Vertical lines
 	cols := []int{
-		1,
-		width / 2,
+		0,
+		width / 4,
+		(2 * width / 4),
+		(3 * width / 4),
+		width,
 	}
 
 	for _, y := range rows {
