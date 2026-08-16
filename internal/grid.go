@@ -8,7 +8,7 @@ import (
 
 const memoryPieRadius int8 = 3
 
-const colString string = "\u23D0"
+const colString string = "|"
 
 const degreeSign string = "\u00B0"
 
@@ -42,47 +42,53 @@ func HideCursor() {
 	fmt.Printf("\033[?25l")
 }
 
-func printBoxHorizontal(width int) {
+func printBoxHorizontal(runeBuffer *buffer, width int, height int) {
 	boxSize := int(width/3 - 2)
 	boxString := strings.Repeat("─", boxSize)
 	boxTopLine := boxString + " " + boxString + " " + boxString
-	fmt.Println(purpleize(boxTopLine))
+	runeBuffer.SetRow(height, []rune(boxTopLine))
 }
 
-func printCircle(widthBounds []int) {
-	return
-}
-
-func printBoxVertical(width int, firstBox string) {
-	boxSize := int(width/3 - 2)
-
+func printBoxVertical(runeBuffer *buffer, colNum int, rowLen int) {
+	boxSize := int(rowLen/3 - 2)
 	lineString := purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString)
-	fmt.Println("\r" + lineString)
+	runeBuffer.SetCol(colNum, []rune(lineString), rowLen)
 }
 
-func RenderGrid(width int, height int, len int, buff []byte, mems []int, isInitial bool) {
-	sum := 1
-	last := height - 1
-	midway := int(height / 2)
-	oneBelowMidway := midway - 1
-	oneAboveMidway := midway + 1
-	fmt.Printf("\033[1;1H")
-	for sum < height {
-		switch sum {
-		case 1, last, oneAboveMidway:
-			printBoxHorizontal(width)
-		case midway:
-			if isInitial {
-				printBoxHorizontal(width)
-			} else {
-				printTemp(buff, len)
-			}
-		case oneBelowMidway:
-			printMems(mems)
-		default:
-			printBoxVertical(width, "")
+func RenderGrid(runeBuffer *buffer, width int, height int) {
+	horizontal := '─'
+	vertical := '│'
+	corner := '┼'
 
+	// Horizontal lines
+	rows := []int{
+		1,
+		height / 2,
+		height - 1,
+	}
+
+	// Vertical lines
+	cols := []int{
+		1,
+		width / 2,
+	}
+
+	for _, y := range rows {
+		for x := range width {
+			runeBuffer.Set(x, y, horizontal)
 		}
-		sum += 1
+	}
+
+	for _, x := range cols {
+		for y := range height {
+			runeBuffer.Set(x, y, vertical)
+		}
+	}
+
+	// Intersections
+	for _, y := range rows {
+		for _, x := range cols {
+			runeBuffer.Set(x, y, corner)
+		}
 	}
 }

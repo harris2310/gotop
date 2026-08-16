@@ -13,19 +13,18 @@ import (
 func main() {
 
 	internal.HideCursor()
-	width, height, err := term.GetSize(0)
-	if err != nil {
-		log.Fatal("Couldn't get size of terminal")
-	}
 	fmt.Print("\033[H\033[2J")
-	termBuff := internal.NewBuffer(width, height)
-	time.Sleep(1 * time.Second)
 	for {
 		var wg sync.WaitGroup
-		// width, height, err := term.GetSize(0)
+		width, height, err := term.GetSize(0)
+		if err != nil {
+			log.Fatal("Couldn't get size of terminal")
+		}
+		termBuff := internal.NewBuffer(width, height)
 		if err != nil {
 			log.Fatal("Couldn't compute terminal size")
 		}
+		internal.RenderGrid(termBuff, width, height)
 		buff := make([]byte, 128)
 		ch := make(chan int)
 		mem := make(chan []int)
@@ -36,17 +35,16 @@ func main() {
 		})
 		wg.Go(func() {
 			memAvail, memTot := internal.ReadMem(mem)
-			fmt.Println(memAvail, memTot)
+			_, _ = memAvail, memTot
 			wg.Done()
 		})
 		temp := <-ch
 		mems := <-mem
-		fmt.Println(mems, temp)
+		_, _ = temp, mems
 		for i := range height {
 			fmt.Printf(string(termBuff.Get(i)))
 		}
 		wg.Wait()
-		fmt.Println(" ")
 		time.Sleep(1 * time.Second)
 
 	}

@@ -14,8 +14,25 @@ func (buf *buffer) Get(line int) []rune {
 	return buf.cells[line]
 }
 
-func (buf *buffer) Set(line int, data []rune) {
+func (buf *buffer) SetRow(line int, data []rune) {
+	buf.cells[line] = data
+}
 
+func (buf *buffer) SetCol(col int, data []rune, rowLen int) {
+	for i := range rowLen {
+		buf.cells[i][col] = data[i]
+	}
+}
+
+func (b *buffer) Set(x, y int, r rune) {
+	if y < 0 || y >= len(b.cells) {
+		return
+	}
+	if x < 0 || x >= len(b.cells[y]) {
+		return
+	}
+
+	b.cells[y][x] = r
 }
 
 func NewBuffer(w, h int) *buffer {
@@ -23,7 +40,7 @@ func NewBuffer(w, h int) *buffer {
 	for y := range cells {
 		cells[y] = make([]rune, w)
 		for x := range cells[y] {
-			cells[y][x] = 'e'
+			cells[y][x] = ' '
 		}
 	}
 
