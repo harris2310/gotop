@@ -2,6 +2,7 @@ package internal
 
 import (
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -10,22 +11,36 @@ const memoryPieRadius int8 = 3
 
 const colString string = "|"
 
-const degreeSign string = "\u00B0"
+const degreeSign rune = '°'
 
 const vertAlLeft string = "\u2e20"
 
-const smirkFace string = "\U0001F60F"
+const smirkFace rune = '😏'
 
-func printTemp(buff []byte, len int) {
+/*
+Return the row/col of where the temp will be rendered
+*/
+func getTempSection(totalWidth int, totalHeight int) (int, int) {
+	targetRow := int(math.Floor(float64(totalHeight / 4)))
+	targetCol := int(math.Round(float64(totalWidth / 6)))
+	return targetRow, targetCol
+}
+
+func PrintTemp(buff []byte, len int, buffer *buffer) {
 	temp, err := strconv.Atoi(string(buff[:len-4]))
 	if err != nil {
 		fmt.Printf("Couldn't convert to int")
 	}
+	tens := temp / 10
+	ones := temp % 10
+	targetRow, targetCol := getTempSection(buffer.width, buffer.height)
+	buffer.Set(targetCol, targetRow, rune('0'+tens))
+	buffer.Set(targetCol+1, targetRow, rune('0'+ones))
 	switch {
 	case temp > 60:
-		fmt.Println("\r" + strconv.Itoa(temp) + " " + smirkFace)
+		buffer.Set(targetCol+2, targetRow, smirkFace)
 	default:
-		fmt.Println("\r" + strconv.Itoa(temp) + degreeSign)
+		buffer.Set(targetCol+2, targetRow, degreeSign)
 	}
 }
 

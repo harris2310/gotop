@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func ReadTemp(core int, buff []byte, ch chan int) (temp int) {
+func ReadTemp(core int, buff []byte, ch chan int) {
 	file, err := os.OpenFile("/sys/class/thermal/thermal_zone0/hwmon"+strconv.Itoa(core)+"/temp1_input", os.O_RDONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
@@ -22,7 +22,7 @@ func ReadTemp(core int, buff []byte, ch chan int) (temp int) {
 	return
 }
 
-func ReadMem(ch chan []int) (mem int, total int) {
+func ReadMem(ch chan []int) {
 	file, err := os.OpenFile("/proc/meminfo", os.O_RDONLY, 0644)
 	if err != nil {
 		log.Fatal((err))
@@ -49,5 +49,4 @@ func ReadMem(ch chan []int) (mem int, total int) {
 	newSlice[0] = numAvail
 	newSlice[1] = numTot
 	ch <- newSlice
-	return
 }
