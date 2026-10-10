@@ -1,6 +1,7 @@
 package grid
 
 import (
+	"errors"
 	"fmt"
 	"gotop/internal/buffer"
 	"math"
@@ -72,7 +73,10 @@ func printBoxVertical(runeBuffer *Buffer, colNum int, rowLen int) {
 	runeBuffer.SetCol(colNum, []rune(lineString), rowLen)
 }
 
-func RenderGrid(runeBuffer *Buffer, width int, height int) {
+func RenderGrid(runeBuffer *Buffer, width int, height int) (result int, err error) {
+	if height > 150 || width > 200 {
+		return 1, errors.New("Terminal Size too large")
+	}
 	horizontal := '─'
 	vertical := '│'
 	corner := '┼'
@@ -111,4 +115,5 @@ func RenderGrid(runeBuffer *Buffer, width int, height int) {
 			runeBuffer.Set(x, y, corner)
 		}
 	}
+	return 1, nil
 }

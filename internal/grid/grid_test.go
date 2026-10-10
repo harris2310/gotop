@@ -8,13 +8,15 @@ import (
 )
 
 func TestRenderGrid(t *testing.T) {
-	tests := [][]int{{50, 20, 30}, {30, 100, 30}}
+	tests := [][]int{{50, 20}, {30, 100}, {40, 140}}
 	test_buffer := buffer.NewBuffer(20, 30)
 	for _, tt := range tests {
 		t.Run("test case "+strconv.Itoa(tt[0]), func(t *testing.T) {
 			fmt.Print(tt)
-			t.Error("hi")
+			_, err := RenderGrid(test_buffer, tt[0], tt[1])
+			if err != nil {
+				t.Error("Terminal too large")
+			}
 		})
-		RenderGrid(test_buffer, 20, 30)
 	}
 }
