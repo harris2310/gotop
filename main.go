@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"gotop/internal"
+	"gotop/internal/buffer"
+	"gotop/internal/grid"
 	"log"
 	"os"
 	"sync"
@@ -13,7 +15,7 @@ import (
 
 func main() {
 
-	internal.HideCursor()
+	grid.HideCursor()
 	fmt.Print("\033[H\033[2J")
 	for {
 		buff := make([]byte, 128)
@@ -33,15 +35,12 @@ func main() {
 		if err != nil {
 			log.Fatal("Couldn't get size of terminal")
 		}
-		termBuff := internal.NewBuffer(width, height)
-		if err != nil {
-			log.Fatal("Couldn't compute terminal size")
-		}
-		internal.RenderGrid(termBuff, width, height)
+		termBuff := buffer.NewBuffer(width, height)
+		grid.RenderGrid(termBuff, width, height)
 		temp := <-ch
 		mems := <-mem
 		_, _ = temp, mems
-		internal.PrintTemp(buff, temp, termBuff)
+		grid.PrintTemp(buff, temp, termBuff)
 		for i := range height {
 			fmt.Printf(string(termBuff.Get(i)))
 		}

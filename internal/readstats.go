@@ -4,12 +4,19 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"runtime"
 	"strconv"
 	"strings"
 )
 
 func ReadTemp(core int, buff []byte, ch chan int) {
-	file, err := os.OpenFile("/sys/class/thermal/thermal_zone0/hwmon"+strconv.Itoa(core)+"/temp1_input", os.O_RDONLY, 0644)
+	var file *os.File
+	var err error
+	if runtime.GOOS == "windows" {
+
+	} else {
+		file, err = os.OpenFile("/sys/class/thermal/thermal_zone0/hwmon"+strconv.Itoa(core)+"/temp1_input", os.O_RDONLY, 0644)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -19,7 +26,6 @@ func ReadTemp(core int, buff []byte, ch chan int) {
 		log.Fatal(err)
 	}
 	ch <- n
-	return
 }
 
 func ReadMem(ch chan []int) {

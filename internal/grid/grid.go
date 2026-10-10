@@ -1,7 +1,8 @@
-package internal
+package grid
 
 import (
 	"fmt"
+	"gotop/internal/buffer"
 	"math"
 	"strconv"
 	"strings"
@@ -17,6 +18,8 @@ const vertAlLeft string = "\u2e20"
 
 const smirkFace rune = '😏'
 
+type Buffer = buffer.Buffer
+
 /*
 Return the row/col of where the temp will be rendered
 */
@@ -26,14 +29,14 @@ func getTempSection(totalWidth int, totalHeight int) (int, int) {
 	return targetRow, targetCol
 }
 
-func PrintTemp(buff []byte, len int, buffer *buffer) {
+func PrintTemp(buff []byte, len int, buffer *Buffer) {
 	temp, err := strconv.Atoi(string(buff[:len-4]))
 	if err != nil {
 		fmt.Printf("Couldn't convert to int")
 	}
 	tens := temp / 10
 	ones := temp % 10
-	targetRow, targetCol := getTempSection(buffer.width, buffer.height)
+	targetRow, targetCol := getTempSection(buffer.Width, buffer.Height)
 	buffer.Set(targetCol, targetRow, rune('0'+tens))
 	buffer.Set(targetCol+1, targetRow, rune('0'+ones))
 	switch {
@@ -57,20 +60,20 @@ func HideCursor() {
 	fmt.Printf("\033[?25l")
 }
 
-func printBoxHorizontal(runeBuffer *buffer, width int, height int) {
+func printBoxHorizontal(runeBuffer *Buffer, width int, height int) {
 	boxSize := int(width/3 - 2)
 	boxString := strings.Repeat("─", boxSize)
 	boxTopLine := boxString + " " + boxString + " " + boxString
 	runeBuffer.SetRow(height, []rune(boxTopLine))
 }
 
-func printBoxVertical(runeBuffer *buffer, colNum int, rowLen int) {
+func printBoxVertical(runeBuffer *Buffer, colNum int, rowLen int) {
 	boxSize := int(rowLen/3 - 2)
 	lineString := purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString) + strings.Repeat(" ", boxSize) + purpleize(colString)
 	runeBuffer.SetCol(colNum, []rune(lineString), rowLen)
 }
 
-func RenderGrid(runeBuffer *buffer, width int, height int) {
+func RenderGrid(runeBuffer *Buffer, width int, height int) {
 	horizontal := '─'
 	vertical := '│'
 	corner := '┼'
