@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gotop/internal"
 	"log"
+	"os"
 	"sync"
 	"time"
 
@@ -28,7 +29,7 @@ func main() {
 			internal.ReadMem(mem)
 			wg.Done()
 		})
-		width, height, err := term.GetSize(0)
+		width, height, err := term.GetSize(int(os.Stdout.Fd()))
 		if err != nil {
 			log.Fatal("Couldn't get size of terminal")
 		}
