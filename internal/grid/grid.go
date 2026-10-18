@@ -30,7 +30,7 @@ func getTempSection(totalWidth int, totalHeight int) (int, int) {
 	return targetRow, targetCol
 }
 
-func PrintTemp(buff []byte, len int, buffer *Buffer) {
+func SetTemp(buff []byte, len int, buffer *Buffer) {
 	temp, err := strconv.Atoi(string(buff[:len-4]))
 	if err != nil {
 		fmt.Printf("Couldn't convert to int")
@@ -48,7 +48,7 @@ func PrintTemp(buff []byte, len int, buffer *Buffer) {
 	}
 }
 
-func PrintMems(mems []int) {
+func SetMems(mems []int) {
 	fmt.Println("\r" + strconv.FormatFloat(float64(mems[0])/1000000, 'f', 2, 64) + "(avail)/" + strconv.FormatFloat(float64(mems[1])/1000000, 'f', 2, 64) + "(in-use)")
 }
 

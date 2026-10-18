@@ -34,8 +34,8 @@ func RunIteration() {
 	grid.RenderGrid(termBuff, width, height)
 	temp := <-ch
 	mems := <-mem
-	grid.PrintMems(mems)
-	grid.PrintTemp(buff, temp, termBuff)
+	grid.SetMems(mems)
+	grid.SetTemp(buff, temp, termBuff)
 	for i := range height {
 		fmt.Print(string(termBuff.Get(i)))
 	}
