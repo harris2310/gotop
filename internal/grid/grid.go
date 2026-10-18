@@ -48,7 +48,7 @@ func PrintTemp(buff []byte, len int, buffer *Buffer) {
 	}
 }
 
-func printMems(mems []int) {
+func PrintMems(mems []int) {
 	fmt.Println("\r" + strconv.FormatFloat(float64(mems[0])/1000000, 'f', 2, 64) + "(avail)/" + strconv.FormatFloat(float64(mems[1])/1000000, 'f', 2, 64) + "(in-use)")
 }
 
